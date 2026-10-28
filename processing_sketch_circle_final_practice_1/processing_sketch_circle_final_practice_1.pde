@@ -22,6 +22,41 @@ void setup() {
   walks.add(new Walk(20, "slow", 2, "gravel", 0));
   walks.add(new Walk(60, "fast", 10, "grass", 3));
   walks.add(new Walk(35, "moderate", 5, "pavement", 1));
+  walks.add(new Walk(45, "moderate", 4, "pavement and grass", 2));
+  walks.add(new Walk(63,"slow and moderate", 12, "pavement", 2));
+  walks.add(new Walk(15, "fast",2, "pavement", 0));
+  walks.add(new Walk(20,"fast", 3, "pavement and carpet", 1));
+  walks.add(new Walk(67, "moderate",8,"pavement and grass", 3));
+  walks.add(new Walk(67, "moderate", 8, "pavement and grass", 3));
+  walks.add(new Walk(42, "fast", 11, "grass", 1));
+  walks.add(new Walk(28, "slow", 2, "pavement", 0));
+  walks.add(new Walk(55, "moderate", 6, "gravel", 2));
+  walks.add(new Walk(73, "fast", 14, "pavement and grass", 1));
+  walks.add(new Walk(35, "slow", 4, "pavement", 1));
+  walks.add(new Walk(81, "moderate", 10, "grass", 4));
+  walks.add(new Walk(24, "fast", 5, "pavement", 0));
+  walks.add(new Walk(63, "moderate", 9, "gravel", 2));
+  walks.add(new Walk(48, "slow", 3, "pavement and grass", 1));
+  walks.add(new Walk(92, "fast", 15, "grass", 3));
+  walks.add(new Walk(31, "moderate", 4, "pavement", 0));
+  walks.add(new Walk(76, "fast", 12, "gravel", 2));
+  walks.add(new Walk(39, "slow", 1, "pavement", 1));
+  walks.add(new Walk(58, "moderate", 7, "grass", 2));
+  walks.add(new Walk(45, "fast", 8, "pavement and grass", 0));
+  walks.add(new Walk(70, "moderate", 11, "gravel", 3));
+  walks.add(new Walk(21, "slow", 2, "pavement", 0));
+  walks.add(new Walk(83, "fast", 13, "grass", 2));
+  walks.add(new Walk(52, "moderate", 5, "pavement and grass", 1));
+  walks.add(new Walk(61, "fast", 9, "gravel", 2));
+  walks.add(new Walk(27, "slow", 3, "pavement", 0));
+  walks.add(new Walk(88, "moderate", 12, "grass", 4));
+  walks.add(new Walk(46, "fast", 7, "pavement and grass", 1));
+  walks.add(new Walk(34, "moderate", 4, "pavement", 0));
+  walks.add(new Walk(79, "fast", 16, "gravel", 3));
+  walks.add(new Walk(53, "slow", 5, "grass", 1));
+  walks.add(new Walk(66, "moderate", 10, "pavement and grass", 2));
+  walks.add(new Walk(29, "fast", 6, "pavement", 0));
+  walks.add(new Walk(95, "moderate", 14, "grass", 5));
 }
 
 void draw() {
@@ -34,7 +69,7 @@ void draw() {
   float centreY = height/2;
 
   // Radius of the big circle
-  float radius = 250;
+  float radius = 350;
 
   // Clears previous hover text
   hoverText = "";
@@ -51,7 +86,7 @@ void draw() {
   frameCounter++;
 
   // Reveal one new walk every 40 frames
-  if (frameCounter % 40 == 0 &&
+  if (frameCounter % 20 == 0 &&
       visibleWalks < walks.size()) {
 
     visibleWalks++;
