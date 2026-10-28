@@ -1,128 +1,322 @@
-void setup() {
-  size(800, 800);
-  background(255);
+// ArrayList = a flexible list that can store many Walk objects
+ArrayList<Walk> walks = new ArrayList<Walk>();
 
+// How many walks are currently visible on screen
+int visibleWalks = 0;
+
+// Counts frames for the animation timing
+int frameCounter = 0;
+
+// Stores the hover information text
+String hoverText = "";
+
+void setup() {
+
+  // Creates an 800 x 800 pixel window
+  size(800, 800);
+
+  // Example walk data
+
+  walks.add(new Walk(45, "moderate", 4, "pavement", 2));
+  walks.add(new Walk(30, "fast", 8, "grass", 1));
+  walks.add(new Walk(20, "slow", 2, "gravel", 0));
+  walks.add(new Walk(60, "fast", 10, "grass", 3));
+  walks.add(new Walk(35, "moderate", 5, "pavement", 1));
+}
+
+void draw() {
+
+  // Clears the screen every frame
+  background(#F0DCEE);
+
+  // Centre coordinates of the circle
   float centreX = width/2;
   float centreY = height/2;
 
-  // Big circle
+  // Radius of the big circle
+  float radius = 250;
+
+  // Clears previous hover text
+  hoverText = "";
+
+  // Draw the main circle
+  stroke(#FFFAFE);
+  strokeWeight(4);
   noFill();
-  stroke(0);
-  strokeWeight(2);
 
-  circle(centreX, centreY, 650);
+  // Diameter is radius × 2
+  circle(centreX, centreY, radius * 2);
 
-  // Example walks
+  // Increase the frame counter every frame
+  frameCounter++;
 
-  drawWalk(
-    centreX, centreY,
-    0,
-    250,
-    "fast",
-    8,
-    "gravel"
-  );
+  // Reveal one new walk every 40 frames
+  if (frameCounter % 40 == 0 &&
+      visibleWalks < walks.size()) {
 
-  drawWalk(
-    centreX, centreY,
-    PI/2,
-    180,
-    "moderate",
-    4,
-    "grass"
-  );
+    visibleWalks++;
+  }
 
-  drawWalk(
-    centreX, centreY,
-    PI,
-    120,
-    "slow",
-    1,
-    "pavement"
-  );
+  // Draw all currently visible walks
+  for (int i = 0; i < visibleWalks; i++) {
 
-  drawWalk(
-    centreX, centreY,
-    3*PI/2,
-    220,
-    "fast",
-    6,
-    "grass"
-  );
+    // Spread walks evenly around the circle
+
+    float angle =
+      map(
+      i,
+      0,
+      walks.size(),
+      0,
+      TWO_PI
+      );
+
+    drawWalk(
+      walks.get(i),
+      centreX,
+      centreY,
+      radius,
+      angle,
+      i+1
+      );
+  }
+
+  // Draw information pop-up if mouse is hovering
+
+  if (!hoverText.equals("")) {
+
+    fill(255);
+    stroke(2);
+
+    rect(
+      mouseX + 15,
+      mouseY + 15,
+      170,
+      110,
+      10
+      );
+
+    fill(0);
+    textAlign(LEFT);
+
+    text(
+      hoverText,
+      mouseX + 25,
+      mouseY + 35
+      );
+  }
 }
 
 void drawWalk(
-  float cx,
-  float cy,
-  float angle,
-  float length,
-  String pace,
-  int turns,
-  String surface
+
+  Walk walk,      // Current walk being drawn
+  float cx,       // Circle centre x
+  float cy,       // Circle centre y
+  float radius,   // Circle radius
+  float angle,    // Position around circle
+  int walkNumber
+
 ) {
 
+  // -----------------------
   // PACE = COLOUR
+  // -----------------------
 
-  if (pace.equals("slow")) {
-    stroke(60, 120, 255);
+  if (walk.pace.equals("slow")) {
+
+    stroke(#BDCBF0); // blue
   }
-  else if (pace.equals("moderate")) {
-    stroke(255, 180, 0);
+  else if (walk.pace.equals("moderate")) {
+
+    stroke(#E09AB4); // dark prink
   }
   else {
-    stroke(255, 70, 70);
+
+    stroke(#917FCE); // prurple
   }
 
+  // -----------------------
   // SURFACE = WIGGLE HEIGHT
+  // -----------------------
 
   float amplitude;
 
-  if (surface.equals("pavement")) {
+  if (walk.surface.equals("pavement")) {
+
+    // Small wiggles
     amplitude = 5;
   }
-  else if (surface.equals("grass")) {
-    amplitude = 12;
+  else if (walk.surface.equals("grass")) {
+
+    // Medium wiggles
+    amplitude = 15;
   }
-  else if (surface.equals("gravel")) {
-    amplitude = 20;
+  else if (walk.surface.equals("gravel")) {
+
+    // Large wiggles
+    amplitude = 25;
   }
   else {
+
     amplitude = 10;
   }
+
+  // Duration controls path length
+
+  float pathLength = walk.duration * 3;
 
   noFill();
   strokeWeight(2);
 
-  float radius = 325;
-
   beginShape();
 
-  for (float d = 0; d <= length; d += 3) {
+  float finalX = 0;
+  float finalY = 0;
+
+  // Move along the path
+
+  for (float d = 0; d <= pathLength; d += 4) {
+
+    // =======================================
+    // TURNS = WIGGLE FREQUENCY
+    // =======================================
 
     float wave =
+
       sin(
-      map(d,
-          0,
-          length,
-          0,
-          TWO_PI * turns)
+
+      map(
+      d,
+      0,
+      pathLength,
+      0,
+      TWO_PI * walk.turns
       )
+
+      )
+
       * amplitude;
+
+    // Move inward from the circle edge
 
     float r = radius - d;
 
+    // Stop paths reaching the exact centre
+
+    if (r < 20) {
+
+      r = 20;
+    }
+
+    // X position
+
     float x =
+
       cx +
       cos(angle) * r +
+
+      // Adds wiggle sideways
+
       cos(angle + HALF_PI) * wave;
 
+    // Y position
+
     float y =
+
       cy +
       sin(angle) * r +
+
+      // Adds wiggle sideways
+
       sin(angle + HALF_PI) * wave;
 
     vertex(x, y);
+
+    // Remember the last point
+
+    finalX = x;
+    finalY = y;
   }
 
   endShape();
+
+  // -----------------------
+  // HOVER DETECTION
+  // -----------------------
+
+  float hoverDistance =
+
+    dist(
+    mouseX,
+    mouseY,
+    finalX,
+    finalY
+    );
+
+  // If mouse is close to endpoint
+
+  if (hoverDistance < 20) {
+
+    hoverText =
+
+      "Walk #" + walkNumber + "\n\n" +
+
+      walk.duration + " mins\n" +
+
+      walk.pace + " pace\n" +
+
+      walk.turns + " turns\n" +
+
+      walk.surface + "\n" +
+
+      walk.breaks + " breaks";
+
+    // Small dot showing selected walk
+
+    noStroke();
+    fill(0);
+
+    circle(
+      finalX,
+      finalY,
+      12
+      );
+  }
+}
+
+
+// =========================
+// WALK CLASS
+// =========================
+
+class Walk {
+
+  // Variables that store one walk's data
+
+  int duration;
+  String pace;
+  int turns;
+  String surface;
+  int breaks;
+
+  // Constructor
+
+  Walk(
+
+    int duration,
+    String pace,
+    int turns,
+    String surface,
+    int breaks
+
+  ) {
+
+    // "this" means this object's variables
+
+    this.duration = duration;
+    this.pace = pace;
+    this.turns = turns;
+    this.surface = surface;
+    this.breaks = breaks;
+  }
 }
